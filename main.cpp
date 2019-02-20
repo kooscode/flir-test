@@ -77,9 +77,9 @@ int main(int argc, char** argv) {
                     }
 
                     
-                    //get pixel format and change to BGR8 if needed..
+                    //get pixel format and change if needed..
                     flir::PixelFormatEnums flir_format = pcam->PixelFormat.GetValue();
-                    if (flir_format != flir::PixelFormatEnums::PixelFormat_BGR8)
+                    if (flir_format != flir::PixelFormatEnums::PixelFormat_YUV411Packed)//PixelFormat_BGR8)
                     {
                         //get ptr to pixel format node item
                         flir_api::CEnumerationPtr ptrPixelFormat = nodemap.GetNode("PixelFormat");
@@ -90,15 +90,15 @@ int main(int argc, char** argv) {
                         else
                         {
                                 // Retrieve the desired entry node from the enumeration node
-                                flir_api::CEnumEntryPtr ptrPixelFormatBGR8 = ptrPixelFormat->GetEntryByName("BGR8");
-                                if (!flir_api::IsAvailable(ptrPixelFormatBGR8) || (!flir_api::IsReadable(ptrPixelFormatBGR8)))
+                                flir_api::CEnumEntryPtr ptrPixelFormatEntry = ptrPixelFormat->GetEntryByName("YUV411Packed");//BGR8");
+                                if (!flir_api::IsAvailable(ptrPixelFormatEntry) || (!flir_api::IsReadable(ptrPixelFormatEntry)))
                                 {
-                                        std::cout << "Pixel BGR8 not available..." << std::endl;
+                                        std::cout << "Pixel RGB8Packed not available..." << std::endl;
                                 }
                                 else
                                 {
                                         // Retrieve the integer value from the entry node
-                                        int64_t pixelFormatBGR8 = ptrPixelFormatBGR8->GetValue();
+                                        int64_t pixelFormatBGR8 = ptrPixelFormatEntry->GetValue();
                                         // Set integer as new value for enumeration node
                                         ptrPixelFormat->SetIntValue(pixelFormatBGR8);
                                         std::cout << "Pixel format set to " << ptrPixelFormat->GetCurrentEntry()->GetSymbolic() << std::endl;
@@ -106,23 +106,18 @@ int main(int argc, char** argv) {
                         }                        
                     }
 
-                    
-
                     // begin acquisition
                     pcam->BeginAcquisition();
                     
                     //Create OpenCV Window
                     char window_name[] = "FLIR";
-                    cv::namedWindow(window_name, cv::WINDOW_NORMAL | cv::WINDOW_FREERATIO);// | WINDOW_AUTOSIZE);
+                    cv::namedWindow(window_name, cv::WINDOW_NORMAL | cv::WINDOW_FREERATIO | cv::WINDOW_AUTOSIZE);
                     
-                    // fps timer
-                    tc::stopwatch sw;
-                    sw.start();
-                    uint32_t fcount = 0;
-                    uint32_t refresh_fps = 0;
-
+                    //timer
                     tc::stopwatch sw2;
                     sw2.start();
+                    uint32_t total_ms = 0;
+                    uint32_t cam_fps = 0;
                             
                     //camera loop..
                     for ( ;; )
@@ -144,22 +139,15 @@ int main(int argc, char** argv) {
                             uint32_t width = image_ptr->GetWidth();
                             uint32_t height = image_ptr->GetHeight();
 
-                            //image data contains padding. When allocating Mat container size, you need to account for the X,Y image data padding.
-
-                            cv::Mat cvMat = cv::Mat(height + ypad, width + xpad, CV_8UC3, image_ptr->GetData(), image_ptr->GetStride());
-
-                            fcount ++;
-                            int64_t ms = sw.get_elapsed_ms();            
-                            if (ms > 1000)
-                            {
-                                refresh_fps = fcount;                
-                                fcount = 0;
-                                sw.reset();
-                            }
+                            //convert yuv to bgr8
+                            flir::ImagePtr img_converted_ptr = image_ptr->Convert(flir::PixelFormatEnums::PixelFormat_BGR8);
                             
+                            //image data contains padding. When allocating Mat container size, you need to account for the X,Y image data padding.
+                            cv::Mat cvMat = cv::Mat(height + ypad, width + xpad, CV_8UC3, img_converted_ptr->GetData(), img_converted_ptr->GetStride());
+
                             //construct & paint fps and ms delay text.
                             std::stringstream fpsstr;
-                            fpsstr << "fps: " << std::fixed << std::setprecision(0) << refresh_fps << ", " << get_img_ms << "ms";
+                            fpsstr << "fps: " << std::fixed << std::setprecision(0) << cam_fps << ", acquire:" << get_img_ms << "ms";
                             cv::putText(cvMat, fpsstr.str(), cv::Point(10,50), cv::FONT_HERSHEY_PLAIN, 4,  cv::Scalar(0x00, 0x00, 0xff), 4);   
                             
                             //update onscreen img.
@@ -168,6 +156,9 @@ int main(int argc, char** argv) {
                             //release  buffers
                             image_ptr->Release();
                             
+                            total_ms = sw2.get_elapsed_ms();
+                            cam_fps = 1000 / total_ms;
+
                         }
                         
                         
