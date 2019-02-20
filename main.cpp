@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
                                 flir_api::CEnumEntryPtr ptrPixelFormatEntry = ptrPixelFormat->GetEntryByName("YUV411Packed");//BGR8");
                                 if (!flir_api::IsAvailable(ptrPixelFormatEntry) || (!flir_api::IsReadable(ptrPixelFormatEntry)))
                                 {
-                                        std::cout << "Pixel RGB8Packed not available..." << std::endl;
+                                        std::cout << "Pixel YUV411Packed not available..." << std::endl;
                                 }
                                 else
                                 {
