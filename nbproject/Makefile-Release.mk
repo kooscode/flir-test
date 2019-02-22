@@ -35,6 +35,10 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/e1dda48/camera_base.o \
+	${OBJECTDIR}/_ext/e1dda48/camera_flir_blackfly.o \
+	${OBJECTDIR}/_ext/e1dda48/camera_usb.o \
+	${OBJECTDIR}/_ext/e1dda48/error_base.o \
 	${OBJECTDIR}/_ext/e1dda48/stopwatch.o \
 	${OBJECTDIR}/main.o
 
@@ -62,6 +66,26 @@ LDLIBSOPTIONS=
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/flir-test: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/flir-test ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/_ext/e1dda48/camera_base.o: ../libterraclear/src/camera_base.cpp
+	${MKDIR} -p ${OBJECTDIR}/_ext/e1dda48
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/e1dda48/camera_base.o ../libterraclear/src/camera_base.cpp
+
+${OBJECTDIR}/_ext/e1dda48/camera_flir_blackfly.o: ../libterraclear/src/camera_flir_blackfly.cpp
+	${MKDIR} -p ${OBJECTDIR}/_ext/e1dda48
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/e1dda48/camera_flir_blackfly.o ../libterraclear/src/camera_flir_blackfly.cpp
+
+${OBJECTDIR}/_ext/e1dda48/camera_usb.o: ../libterraclear/src/camera_usb.cpp
+	${MKDIR} -p ${OBJECTDIR}/_ext/e1dda48
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/e1dda48/camera_usb.o ../libterraclear/src/camera_usb.cpp
+
+${OBJECTDIR}/_ext/e1dda48/error_base.o: ../libterraclear/src/error_base.cpp
+	${MKDIR} -p ${OBJECTDIR}/_ext/e1dda48
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/e1dda48/error_base.o ../libterraclear/src/error_base.cpp
 
 ${OBJECTDIR}/_ext/e1dda48/stopwatch.o: ../libterraclear/src/stopwatch.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/e1dda48

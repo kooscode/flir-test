@@ -2,6 +2,14 @@
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="f1" displayName="libtc" projectFiles="true">
+      <itemPath>../libterraclear/src/camera_base.cpp</itemPath>
+      <itemPath>../libterraclear/src/camera_base.hpp</itemPath>
+      <itemPath>../libterraclear/src/camera_flir_blackfly.cpp</itemPath>
+      <itemPath>../libterraclear/src/camera_flir_blackfly.hpp</itemPath>
+      <itemPath>../libterraclear/src/camera_usb.cpp</itemPath>
+      <itemPath>../libterraclear/src/camera_usb.hpp</itemPath>
+      <itemPath>../libterraclear/src/error_base.cpp</itemPath>
+      <itemPath>../libterraclear/src/error_base.hpp</itemPath>
       <itemPath>../libterraclear/src/stopwatch.cpp</itemPath>
       <itemPath>../libterraclear/src/stopwatch.hpp</itemPath>
     </logicalFolder>
@@ -40,6 +48,7 @@
             <pElem>..</pElem>
             <pElem>/usr/include/spinnaker</pElem>
           </incDir>
+          <commandLine>-DTC_USE_BLACKFLY</commandLine>
         </ccTool>
         <linkerTool>
           <linkerLibItems>
@@ -48,6 +57,46 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="../libterraclear/src/camera_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_base.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_flir_blackfly.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_flir_blackfly.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_usb.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_usb.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/error_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/error_base.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../libterraclear/src/stopwatch.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../libterraclear/src/stopwatch.hpp" ex="false" tool="3" flavor2="0">
@@ -75,6 +124,46 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="../libterraclear/src/camera_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_base.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_flir_blackfly.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_flir_blackfly.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_usb.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_usb.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/error_base.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/error_base.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../libterraclear/src/stopwatch.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../libterraclear/src/stopwatch.hpp" ex="false" tool="3" flavor2="0">

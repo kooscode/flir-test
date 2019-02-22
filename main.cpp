@@ -7,13 +7,21 @@
 #include "opencv2/opencv.hpp"
 #include "libterraclear/src/stopwatch.hpp"
 
+#ifndef TC_USE_BLACKFLY
+ #define TC_USE_BLACKFLY
+#endif 
+
+#include "libterraclear/src/camera_flir_blackfly.hpp"
+
 namespace tc = terraclear;
 namespace flir = Spinnaker;
 namespace flir_api = Spinnaker::GenApi;
 namespace flir_icam = Spinnaker::GenICam;
 
-int main(int argc, char** argv) {
-
+int main(int argc, char** argv) 
+{
+     
+    
     try
     {
         //smartptr to dlir System..
@@ -21,7 +29,7 @@ int main(int argc, char** argv) {
 
         //get flir cameras attached to system
         flir::CameraList flir_cams = flir_system->GetCameras();
-
+        
         uint32_t cam_count = flir_cams.GetSize();
         if (cam_count > 0)
         {
@@ -79,33 +87,31 @@ int main(int argc, char** argv) {
                     
                     //get pixel format and change if needed..
                     flir::PixelFormatEnums flir_format = pcam->PixelFormat.GetValue();
-                    if (flir_format != flir::PixelFormatEnums::PixelFormat_YUV411Packed)//PixelFormat_BGR8)
-                    {
-                        //get ptr to pixel format node item
-                        flir_api::CEnumerationPtr ptrPixelFormat = nodemap.GetNode("PixelFormat");
-                        if (!flir_api::IsAvailable(ptrPixelFormat) || (!flir_api::IsWritable(ptrPixelFormat)))
-                        {
-                            std::cout << "could not get PixelFormat" << std::endl;
-                        }
-                        else
-                        {
-                                // Retrieve the desired entry node from the enumeration node
-                                flir_api::CEnumEntryPtr ptrPixelFormatEntry = ptrPixelFormat->GetEntryByName("YUV411Packed");//BGR8");
-                                if (!flir_api::IsAvailable(ptrPixelFormatEntry) || (!flir_api::IsReadable(ptrPixelFormatEntry)))
-                                {
-                                        std::cout << "Pixel YUV411Packed not available..." << std::endl;
-                                }
-                                else
-                                {
-                                        // Retrieve the integer value from the entry node
-                                        int64_t pixelFormatBGR8 = ptrPixelFormatEntry->GetValue();
-                                        // Set integer as new value for enumeration node
-                                        ptrPixelFormat->SetIntValue(pixelFormatBGR8);
-                                        std::cout << "Pixel format set to " << ptrPixelFormat->GetCurrentEntry()->GetSymbolic() << std::endl;
-                                }
-                        }                        
-                    }
 
+                    //get ptr to pixel format node item
+                    flir_api::CEnumerationPtr ptrPixelFormat = nodemap.GetNode("PixelFormat");
+                    if (!flir_api::IsAvailable(ptrPixelFormat) || (!flir_api::IsWritable(ptrPixelFormat)))
+                    {
+                        std::cout << "could not get PixelFormat" << std::endl;
+                    }
+                    else
+                    {
+                            // Retrieve the desired entry node from the enumeration node
+                            flir_api::CEnumEntryPtr ptrPixelFormatEntry = ptrPixelFormat->GetEntryByName("BayerGB8");//YUV411Packed,BGR8,BayerGB8;
+                            if (!flir_api::IsAvailable(ptrPixelFormatEntry) || (!flir_api::IsReadable(ptrPixelFormatEntry)))
+                            {
+                                    std::cout << "Pixel BayerRG8 not available..." << std::endl;
+                            }
+                            else
+                            {
+                                    // Retrieve the integer value from the entry node
+                                    int64_t pixel_format = ptrPixelFormatEntry->GetValue();
+                                    // Set integer as new value for enumeration node
+                                    ptrPixelFormat->SetIntValue(pixel_format);
+                            }
+
+                            std::cout << "Pixel format set to " << ptrPixelFormat->GetCurrentEntry()->GetSymbolic() << std::endl;
+                    }                        
                     // begin acquisition
                     pcam->BeginAcquisition();
                     
@@ -116,8 +122,10 @@ int main(int argc, char** argv) {
                     //timer
                     tc::stopwatch sw2;
                     sw2.start();
-                    uint32_t total_ms = 0;
+                    uint64_t total_ms = 0;
                     uint32_t cam_fps = 0;
+                    uint32_t frame_cnt = 0;
+                    float avg_ms = 0.0f;
                             
                     //camera loop..
                     for ( ;; )
@@ -125,7 +133,6 @@ int main(int argc, char** argv) {
                         //grab image from FLIR stack..
                         sw2.reset();
                         flir::ImagePtr image_ptr = pcam->GetNextImage();
-                        uint32_t get_img_ms = sw2.get_elapsed_ms();
                         
                         //check if image was complete on grab..
                         if (image_ptr->GetImageStatus() > 0)
@@ -147,7 +154,7 @@ int main(int argc, char** argv) {
 
                             //construct & paint fps and ms delay text.
                             std::stringstream fpsstr;
-                            fpsstr << "fps: " << std::fixed << std::setprecision(0) << cam_fps << ", acquire:" << get_img_ms << "ms";
+                            fpsstr << "fps: " << std::fixed << std::setprecision(0) << cam_fps << ", avg:" << avg_ms << "ms";
                             cv::putText(cvMat, fpsstr.str(), cv::Point(10,50), cv::FONT_HERSHEY_PLAIN, 4,  cv::Scalar(0x00, 0x00, 0xff), 4);   
                             
                             //update onscreen img.
@@ -155,18 +162,25 @@ int main(int argc, char** argv) {
                             
                             //release  buffers
                             image_ptr->Release();
-                            
-                            total_ms = sw2.get_elapsed_ms();
-                            cam_fps = 1000 / total_ms;
-
                         }
-                        
                         
                         //wait for Key and quit on ESC button
                         int x = cv::waitKey(1);
                         if(x == 27) //ESC = 27
                         {
                             break;       
+                        }
+
+                        frame_cnt++;
+                        total_ms += sw2.get_elapsed_ms();
+                        if (frame_cnt >= 100)
+                        {
+                            avg_ms = (float)total_ms / (float)frame_cnt;
+                            cam_fps = 1000.0f / avg_ms;
+                            frame_cnt = 0;
+                            total_ms = 0;
+                            
+                            std::cout << "fps:" << cam_fps << std::endl;
                         }
                     }                        
                     
@@ -194,7 +208,8 @@ int main(int argc, char** argv) {
     {
         std::cout << "FLIR Exception: " << e.what() << std::endl;
     }
-        
+    
+    
     return 0;
 }
 
