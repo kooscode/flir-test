@@ -1,19 +1,16 @@
-
-#include "Spinnaker.h"
-#include "SpinGenApi/SpinnakerGenApi.h"
-
-
 #include <unistd.h>
 #include <iostream>
 #include <sstream> 
 
+//opencv
 #include "opencv2/opencv.hpp"
+
+//libterraclear
 #include "libterraclear/src/stopwatch.hpp"
 
 #ifndef TC_USE_BLACKFLY
- #define TC_USE_BLACKFLY
-#endif 
-
+    #define TC_USE_BLACKFLY
+#endif
 #include "libterraclear/src/camera_flir_blackfly.hpp"
 
 namespace tc = terraclear;
@@ -22,14 +19,15 @@ namespace flir_api = Spinnaker::GenApi;
 namespace flir_icam = Spinnaker::GenICam;
 
 int main(int argc, char** argv) 
+
 {
      
-     tc::camera_flir_blackfly flir_cam;
-    cv::Mat cam_img = flir_cam.getRGBFrame();
+    char window_name[] = "FLIR";
+    tc::camera_flir_blackfly poe_cam;
     
     //Create OpenCV Window
-    char window_name[] = "FLIR";
     cv::namedWindow(window_name, cv::WINDOW_NORMAL | cv::WINDOW_FREERATIO | cv::WINDOW_AUTOSIZE);
+    cv::Mat cam_img = poe_cam.getRGBFrame();
 
     uint32_t retry_count = 0;
     while (true)
@@ -37,20 +35,23 @@ int main(int argc, char** argv)
         if (retry_count > 10)
             return -1;
         
-        flir_cam.update_frames();
-        cam_img = flir_cam.getRGBFrame();
+        poe_cam.update_frames();
+        cam_img = poe_cam.getRGBFrame();
         if ((cam_img.rows > 0) && (cam_img.cols > 0))
+        {
             break;
+        }
         else
         {
             retry_count ++;
             usleep(250000);
         }
+
         std::cout << "." << std::flush;
     }
     std::cout << std::endl;
 
-       //timer
+    //timer
     tc::stopwatch sw2;
     sw2.start();
     uint64_t total_ms = 0;
@@ -63,11 +64,11 @@ int main(int argc, char** argv)
     {
         //grab image from FLIR stack..
         sw2.reset();
-        flir_cam.update_frames();
+        poe_cam.update_frames();
 
         //construct & paint fps and ms delay text.
         std::stringstream fpsstr;
-        fpsstr << "fps: " << std::fixed << std::setprecision(0) << cam_fps << ", avg:" << avg_ms;
+        fpsstr << "fps: " << std::fixed << std::setprecision(0) << cam_fps << ", frame lag:" << avg_ms << "ms";
         cv::putText(cam_img, fpsstr.str(), cv::Point(10,50), cv::FONT_HERSHEY_PLAIN, 4,  cv::Scalar(0x00, 0x00, 0xff), 4);   
 
         //update onscreen img.
