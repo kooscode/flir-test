@@ -55,9 +55,11 @@ int main(int argc, char** argv)
     tc::stopwatch sw2;
     sw2.start();
     uint64_t total_ms = 0;
+    uint64_t total_lag_ms = 0;
     uint32_t cam_fps = 0;
     uint32_t frame_cnt = 0;
     float avg_ms = 0.0f;
+    float avg_lag_ms = 0.0f;
 
     //camera loop..
     for ( ;; )
@@ -65,11 +67,12 @@ int main(int argc, char** argv)
         //grab image from FLIR stack..
         sw2.reset();
         poe_cam.update_frames();
-
+        total_lag_ms += sw2.get_elapsed_ms();
+        
         //construct & paint fps and ms delay text.
         std::stringstream fpsstr;
-        fpsstr << "fps: " << std::fixed << std::setprecision(0) << cam_fps << ", frame lag:" << avg_ms << "ms";
-        cv::putText(cam_img, fpsstr.str(), cv::Point(10,50), cv::FONT_HERSHEY_PLAIN, 3,  cv::Scalar(0x00, 0x00, 0xff), 4);   
+        fpsstr << "fps: " << std::fixed << std::setprecision(0) << cam_fps << ", frame lag T:" << avg_ms << "ms, A:" << avg_lag_ms << "ms";
+        cv::putText(cam_img, fpsstr.str(), cv::Point(10,50), cv::FONT_HERSHEY_PLAIN, 2,  cv::Scalar(0x00, 0x00, 0xff), 2);   
 
         //update onscreen img.
         cv::imshow(window_name, cam_img);
@@ -87,9 +90,11 @@ int main(int argc, char** argv)
          if (frame_cnt >= 60)
          {
              avg_ms = (float)total_ms / (float)frame_cnt;
+             avg_lag_ms = (float)total_lag_ms / (float)frame_cnt;
              cam_fps = 1000.0f / avg_ms;
              frame_cnt = 0;
              total_ms = 0;
+             total_lag_ms = 0;
          }
 
     }    
