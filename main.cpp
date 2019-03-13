@@ -18,14 +18,83 @@ namespace flir = Spinnaker;
 namespace flir_api = Spinnaker::GenApi;
 namespace flir_icam = Spinnaker::GenICam;
 
-int main(int argc, char** argv) 
+typedef std::pair<bool, int > VectorResult ;
 
+template < typename T>
+std::pair<bool, int > GetVectorElementIndex(const std::vector<T>  & vecOfElements, const T  & element)
 {
-     
-    char window_name[] = "FLIR";
-    tc::camera_flir_blackfly poe_cam;
+	std::pair<bool, int > result;
+ 
+	// Find given element in vector
+	auto it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
+ 
+	if (it != vecOfElements.end())
+	{
+		result.second = distance(vecOfElements.begin(), it);
+		result.first = true;
+	}
+	else
+	{
+		result.first = false;
+		result.second = -1;
+	}
+ 
+	return result;
+}
+
+int main(int argc, char** argv) 
+{
+    
+    uint32_t cam_index = 0;    
+    std::string cam_serial = "";
+
+    //get camera list.
+    std::vector<std::string> cams = tc::camera_flir_blackfly::get_cameras();
+    
+    //Get cam count
+    uint32_t cam_count = cams.size();
+    
+    //print all connected cams serials.
+    std::cout << "Found " << cam_count << " FLIR cameras:" << std::endl;
+    for (auto cam : cams)
+        std::cout << "\t" << cam << std::endl;
+
+    //line spacer..
+    std::cout << std::endl;
+
+    //If serial supplied on cmdline params, find index of camera by serial
+    if (argc > 1)
+    {
+        cam_serial = argv[1];
+        VectorResult vr = GetVectorElementIndex(cams, cam_serial);
+        if (vr.first)
+        {
+            cam_index = vr.second;
+        }
+        else
+        {
+            std::cout << std::endl << "FLIR camera with serial " << cam_serial << " not found." << std::endl;
+            return -1;
+        }
+    }
+
+    //load camera by index.    
+    if (cam_count > cam_index)
+    {
+        //grab 
+        cam_serial = cams.at(cam_index);
+        std::cout << "Connecting to camera " << cam_index << " with serial# " << cam_serial << std::endl << std::flush;
+    }
+    else
+    {
+        std::cout << "No FLIR cameras found." << std::endl;
+        return -1;
+    }
+    
+    tc::camera_flir_blackfly poe_cam(cam_serial);
     
     //Create OpenCV Window
+    std::string window_name = "FLIR";
     cv::namedWindow(window_name, cv::WINDOW_NORMAL | cv::WINDOW_FREERATIO | cv::WINDOW_AUTOSIZE);
     cv::Mat cam_img = poe_cam.getRGBFrame();
 
