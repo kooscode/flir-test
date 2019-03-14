@@ -30,7 +30,7 @@ std::pair<bool, int > GetVectorElementIndex(const std::vector<T>  & vecOfElement
  
 	if (it != vecOfElements.end())
 	{
-		result.second = distance(vecOfElements.begin(), it);
+		result.second = std::distance(vecOfElements.begin(), it);
 		result.first = true;
 	}
 	else
@@ -47,12 +47,12 @@ int main(int argc, char** argv)
     //setting up FLIR parameters.
     tc::camera_flir_blackfly::flir_settings blkfly_settings;
     blkfly_settings.pixel_format =  tc::FLIR_PixelFormat::PixelFormat_BayerRG8;
-    blkfly_settings.width = 1440;
-    blkfly_settings.height = 1080;
-    blkfly_settings.bin_vertical = 1;
-    blkfly_settings.bin_horizontal = 1;
+    blkfly_settings.width = 720;
+    blkfly_settings.height = 540;
+    blkfly_settings.bin_vertical = 2;
+    blkfly_settings.bin_horizontal = 2;
     blkfly_settings.flip_y = false;
-    blkfly_settings.fps = 70;
+    blkfly_settings.fps = 125;
     blkfly_settings.exposure_time = 987625 / blkfly_settings.fps;
     
     uint32_t cam_index = 0;    
@@ -88,12 +88,12 @@ int main(int argc, char** argv)
         }
     }
 
-    //load camera by index.    
+    //get camera serial by index.    
     if (cam_count > cam_index)
     {
         //grab 
         cam_serial = cams.at(cam_index);
-        std::cout << "Connecting to camera " << cam_index << " with serial# " << cam_serial << std::endl << std::flush;
+        std::cout << "Connecting to FLIR camera " << cam_index << " with serial# " << cam_serial << std::endl << std::flush;
     }
     else
     {
@@ -101,6 +101,7 @@ int main(int argc, char** argv)
         return -1;
     }
     
+    //create camera by serial
     tc::camera_flir_blackfly poe_cam(blkfly_settings, cam_serial);
     
     //Create OpenCV Window
