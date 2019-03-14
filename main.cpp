@@ -44,6 +44,16 @@ std::pair<bool, int > GetVectorElementIndex(const std::vector<T>  & vecOfElement
 
 int main(int argc, char** argv) 
 {
+    //setting up FLIR parameters.
+    tc::camera_flir_blackfly::flir_settings blkfly_settings;
+    blkfly_settings.pixel_format =  tc::FLIR_PixelFormat::PixelFormat_BayerRG8;
+    blkfly_settings.width = 1440;
+    blkfly_settings.height = 1080;
+    blkfly_settings.bin_vertical = 1;
+    blkfly_settings.bin_horizontal = 1;
+    blkfly_settings.flip_y = false;
+    blkfly_settings.fps = 70;
+    blkfly_settings.exposure_time = 987625 / blkfly_settings.fps;
     
     uint32_t cam_index = 0;    
     std::string cam_serial = "";
@@ -91,7 +101,7 @@ int main(int argc, char** argv)
         return -1;
     }
     
-    tc::camera_flir_blackfly poe_cam(cam_serial);
+    tc::camera_flir_blackfly poe_cam(blkfly_settings, cam_serial);
     
     //Create OpenCV Window
     std::string window_name = "FLIR";
