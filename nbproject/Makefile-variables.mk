@@ -22,6 +22,14 @@ CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/flir-test
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux/package
 CND_PACKAGE_NAME_Release=flir-test.tar
 CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/flir-test.tar
+# Debug_cv4 configuration
+CND_PLATFORM_Debug_cv4=GNU-Linux
+CND_ARTIFACT_DIR_Debug_cv4=dist/Debug_cv4/GNU-Linux
+CND_ARTIFACT_NAME_Debug_cv4=flir-test
+CND_ARTIFACT_PATH_Debug_cv4=dist/Debug_cv4/GNU-Linux/flir-test
+CND_PACKAGE_DIR_Debug_cv4=dist/Debug_cv4/GNU-Linux/package
+CND_PACKAGE_NAME_Debug_cv4=flir-test.tar
+CND_PACKAGE_PATH_Debug_cv4=dist/Debug_cv4/GNU-Linux/package/flir-test.tar
 #
 # include compiler specific variables
 #
