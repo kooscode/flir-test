@@ -8,6 +8,8 @@
       <itemPath>../libterraclear/src/camera_base.hpp</itemPath>
       <itemPath>../libterraclear/src/camera_flir_blackfly.cpp</itemPath>
       <itemPath>../libterraclear/src/camera_flir_blackfly.hpp</itemPath>
+      <itemPath>../libterraclear/src/camera_flir_blackfly_system.cpp</itemPath>
+      <itemPath>../libterraclear/src/camera_flir_blackfly_system.hpp</itemPath>
       <itemPath>../libterraclear/src/camera_usb.cpp</itemPath>
       <itemPath>../libterraclear/src/camera_usb.hpp</itemPath>
       <itemPath>../libterraclear/src/error_base.cpp</itemPath>
@@ -89,6 +91,16 @@
             flavor2="0">
       </item>
       <item path="../libterraclear/src/camera_flir_blackfly.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_flir_blackfly_system.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_flir_blackfly_system.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -184,6 +196,16 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../libterraclear/src/camera_flir_blackfly_system.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_flir_blackfly_system.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../libterraclear/src/camera_usb.cpp"
             ex="false"
             tool="1"
@@ -273,6 +295,16 @@
             flavor2="9">
       </item>
       <item path="../libterraclear/src/camera_flir_blackfly.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_flir_blackfly_system.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../libterraclear/src/camera_flir_blackfly_system.hpp"
             ex="false"
             tool="3"
             flavor2="0">

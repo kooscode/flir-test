@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/e1dda48/camera_async.o \
 	${OBJECTDIR}/_ext/e1dda48/camera_base.o \
 	${OBJECTDIR}/_ext/e1dda48/camera_flir_blackfly.o \
+	${OBJECTDIR}/_ext/e1dda48/camera_flir_blackfly_system.o \
 	${OBJECTDIR}/_ext/e1dda48/camera_usb.o \
 	${OBJECTDIR}/_ext/e1dda48/error_base.o \
 	${OBJECTDIR}/_ext/e1dda48/filetools.o \
@@ -84,6 +85,11 @@ ${OBJECTDIR}/_ext/e1dda48/camera_flir_blackfly.o: ../libterraclear/src/camera_fl
 	${MKDIR} -p ${OBJECTDIR}/_ext/e1dda48
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I.. -I/usr/include/spinnaker `pkg-config --cflags opencv4`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/e1dda48/camera_flir_blackfly.o ../libterraclear/src/camera_flir_blackfly.cpp
+
+${OBJECTDIR}/_ext/e1dda48/camera_flir_blackfly_system.o: ../libterraclear/src/camera_flir_blackfly_system.cpp
+	${MKDIR} -p ${OBJECTDIR}/_ext/e1dda48
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I.. -I/usr/include/spinnaker `pkg-config --cflags opencv4`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/e1dda48/camera_flir_blackfly_system.o ../libterraclear/src/camera_flir_blackfly_system.cpp
 
 ${OBJECTDIR}/_ext/e1dda48/camera_usb.o: ../libterraclear/src/camera_usb.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/e1dda48

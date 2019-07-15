@@ -11,6 +11,7 @@
 #ifndef TC_USE_BLACKFLY
     #define TC_USE_BLACKFLY
 #endif
+#include "libterraclear/src/camera_flir_blackfly_system.hpp"
 #include "libterraclear/src/camera_flir_blackfly.hpp"
 #include "libterraclear/src/camera_async.hpp"
 
@@ -58,9 +59,11 @@ int main(int argc, char** argv)
     
     uint32_t cam_index = 0;    
     std::string cam_serial = "19244277";
-
+    
+    tc::camera_flir_blackfly_system flir_system;
+    
     //get camera list.
-    std::vector<std::string> cams = tc::camera_flir_blackfly::get_cameras();
+    std::vector<std::string> cams = flir_system.get_cameras();
     
     //Get cam count
     uint32_t cam_count = cams.size();
@@ -103,7 +106,7 @@ int main(int argc, char** argv)
 //    }
     
     //create camera by serial
-    tc::camera_flir_blackfly poe_cam(blkfly_settings, cam_serial);
+    tc::camera_flir_blackfly poe_cam(&flir_system, blkfly_settings, cam_serial);
     
     //Create OpenCV Window
     std::string window_name = "FLIR";
